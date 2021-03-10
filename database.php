@@ -18,6 +18,7 @@
        }
 
        function closeConn() {
+           // PDO doesn't require .close()
            if ($this->DB_CONN != NULL) {
                try {
                     $this->DB_CONN = NULL;
@@ -27,28 +28,36 @@
                 }
            }
 
-           echo('null');
            return false;
        }
 
        // User functions. These should be moved to another class or stored procedure later
        function validateUser($name, $password) {
-
+            
        }
 
-       function createUser($name, $rawPwd) {
-        $salt = createSalt();   
-        $hashPwd = $rawPwd;
+       function createUser($name, $rawPwd) {   
+            $hashedPwd = $this->hash($rawPwd);
+            
+            try {
+                $conn = $this->getConn();
+                $stmt = $conn->prepare("INSERT INTO users (name, password) VALUES (:name, :password)");
+                $stmt->bindParam(":name", $name);
+                $stmt->bindParam(":password", $hashedPwd);
+
+                if ($stmt->execute()) {
+                    return true;
+                }
+
+                return true;
+            } catch(Exception $e) {}
+
+            return false;
        }
 
-       function hash($rawPwd, $salt) {
-           $hash = '';
-           return $hash;
-       }
-
-       function createSalt() {
-            $salt = '';
-            return $salt;
+       function hash($rawPwd) {
+           // See: https://www.php.net/manual/en/function.password-hash.php
+           return password_hash($pwd, PASSWORD_BCRYPT);
        }
 
        function doesUserExist($name) {
