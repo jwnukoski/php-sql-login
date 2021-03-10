@@ -1,6 +1,9 @@
 # php-sql-login
-A basic user login design for the LAMP stack.  
-No third-party apps, just standard PHP session authentication which can be edited further.    
+A basic boilerplate for a PHP / SQL user login and registration.  
+
+# Goal
+No third-party apps, just standard PHP session authentication which can be edited further.  
+This project is kept as light as possible, so that it can be used in many places.      
 
 # Hashing
 Hashes created with PHP's BCRYPT algorithm.  
