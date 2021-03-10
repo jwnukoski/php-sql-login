@@ -1,11 +1,10 @@
 <?php require_once('header.php'); ?>
 <?php
     if ($_POST && isset($_POST['username']) && isset($_POST['password'])) {
-        echo('ok');
         $_SESSION['username'] = 'logged';
+        header("Location: index.php");
     } elseif (isset($_SESSION['username'])) {
-        // redirect
-        echo('logged in already');
+        header("Location: index.php");
     } else {
 ?>
     <form method="post" action="login.php">
