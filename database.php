@@ -32,8 +32,23 @@
        }
 
        // User functions. These should be moved to another class or stored procedure later
-       function validateUser($name, $password) {
-            
+       function validateUser($name, $rawPwd) {
+            $hashedInput = $this->hash($rawPwd);
+
+            try {
+                $conn = $this->getConn();
+                $stmt = $conn->prepare("SELECT id FROM users WHERE name = :name AND password = :password");
+                $stmt->bindParam(":name", $name);
+                $stmt->bindParam(":password", $hashedInput);
+
+                if ($stmt->execute()) {
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        return true;
+                    }
+                }
+            } catch(Exception $e) {}
+
+            return false;
        }
 
        function createUser($name, $rawPwd) {   
