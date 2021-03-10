@@ -1,5 +1,6 @@
 # php-sql-login
 A basic boilerplate for a PHP / SQL user login and registration.  
+![Preview of php-sql-login](https://github.com/jwnukoski/php-sql-login/blob/main/screenshot.png?raw=true "php-sql-login Demo")  
 
 # Goal
 No third-party apps, just standard PHP session authentication, which can be edited further.  
