@@ -33,18 +33,26 @@
 
        // TODO: Create users class
        public function validateUser($name, $rawPwd) {
-            $hashedInput = $this->hash($rawPwd);
-
-            try {
-                $conn = $this->getConn();
-                $stmt = $conn->prepare("SELECT id FROM users WHERE name = :name AND password = :password");
-                $stmt->bindParam(":name", $name);
-                $stmt->bindParam(":password", $hashedInput);
-
+           try {
+               $conn = $this->getConn();
+               $stmt = $conn->prepare("SELECT password FROM users WHERE name = :name");
+               $stmt->bindParam(":name", $name);
+               
+                $dbHash = '';
                 if ($stmt->execute()) {
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        return true;
+                        $dbHash = $row(['password']);
                     }
+                }
+
+                //$this->closeConn();
+
+                echo($inputHash);
+                echo('<br/>');
+                echo($dbHash);
+                echo('<br/>');
+                if ($this->verifyHash($rawPwd, $dbHash)) {
+                    return true;
                 }
             } catch(Exception $e) {}
 
@@ -52,8 +60,12 @@
         }
 
         public function createUser($name, $rawPwd) {   
-                $hashedPwd = $this->hash($rawPwd);
-                
+            if ($this->doesUserExist($name)) {
+                return false;
+            }
+            
+            $hashedPwd = $this->hash($rawPwd);
+            
                 try {
                     $conn = $this->getConn();
                     $stmt = $conn->prepare("INSERT INTO users (name, password) VALUES (:name, :password)");
@@ -70,8 +82,12 @@
                 return false;
         }
 
+        private function verifyHash($rawPwd, $hashedPwd) {
+            return password_verify($rawPwd, $hashedPwd);
+        }
+
         private function hash($rawPwd) {
-            return password_hash($pwd, PASSWORD_BCRYPT);
+            return password_hash($pwd, PASSWORD_DEFAULT);
         }
 
         private function doesUserExist($name) {

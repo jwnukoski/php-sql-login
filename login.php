@@ -1,6 +1,7 @@
 <?php require_once('header.php');
     if (isset($_POST['username']) && isset($_POST['password'])) {
         $valid = $db->validateUser($_POST['username'], $_POST['password']);
+        
         if ($valid) {
             header("Location: index.php");
         } else {
