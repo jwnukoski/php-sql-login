@@ -1,4 +1,10 @@
-<?php session_start(); ?>
+<?php 
+    session_start();
+    require_once(__DIR__ . '/database/database.php');
+    if (!isset($db)) {
+        $db = new Database();
+    }
+?>
 <!DOCTYPE html>
 <html>
     <head>
