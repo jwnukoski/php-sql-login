@@ -37,23 +37,21 @@
                $conn = $this->getConn();
                $stmt = $conn->prepare("SELECT password FROM users WHERE name = :name");
                $stmt->bindParam(":name", $name);
-               
-                $dbHash = '';
-                if ($stmt->execute()) {
+               $dbHash = "";
+
+               if ($stmt->execute()) {
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        $dbHash = $row(['password']);
+                        $dbHash = $row['password'];
                     }
                 }
+                
+                $this->closeConn();
 
-                //$this->closeConn();
-
-                echo($inputHash);
-                echo('<br/>');
-                echo($dbHash);
-                echo('<br/>');
                 if ($this->verifyHash($rawPwd, $dbHash)) {
-                    return true;
+                    return $this->setUserSession($name);
                 }
+                
+                return false;
             } catch(Exception $e) {}
 
             return false;
@@ -64,22 +62,30 @@
                 return false;
             }
             
-            $hashedPwd = $this->hash($rawPwd);
-            
-                try {
-                    $conn = $this->getConn();
-                    $stmt = $conn->prepare("INSERT INTO users (name, password) VALUES (:name, :password)");
-                    $stmt->bindParam(":name", $name);
-                    $stmt->bindParam(":password", $hashedPwd);
+            try {
+                $conn = $this->getConn();
+                $stmt = $conn->prepare("INSERT INTO users (name, password) VALUES (:name, :password)");
+                $stmt->bindParam(":name", $name);
+                $stmt->bindParam(":password", $this->hash($rawPwd));
 
-                    if ($stmt->execute()) {
-                        return true;
-                    }
-
+                if ($stmt->execute()) {
                     return true;
-                } catch(Exception $e) {}
+                }
+
+                $this->closeConn();
 
                 return false;
+            } catch(Exception $e) {}
+
+            return false;
+        }
+
+        private function setUserSession($username) {
+            if ($username) {
+                $_SESSION['username'] = $username;
+                return true;
+            }
+            return false;
         }
 
         private function verifyHash($rawPwd, $hashedPwd) {
@@ -87,7 +93,7 @@
         }
 
         private function hash($rawPwd) {
-            return password_hash($pwd, PASSWORD_DEFAULT);
+            return password_hash($rawPwd, PASSWORD_DEFAULT);
         }
 
         private function doesUserExist($name) {
@@ -103,12 +109,15 @@
                             return true;
                             }
                         }
-                    }
-
-                    return false;
-                } catch(Exception $e) {
-                    return true;
                 }
+
+
+                $this->closeConn();
+
+                return false;
+            } catch(Exception $e) {
+                return true;
+            }
         }
     }
 ?>

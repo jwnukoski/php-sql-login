@@ -30,11 +30,11 @@
             </div>
             <div class="form-element">
                 <label>Password:</label>
-                <input type="password" name="password" require />
+                <input type="password" name="password" required />
             </div>
             <div class="form-element">
                 <label>Confirm Password:</label>
-                <input type="password" name="confirm-password" require />
+                <input type="password" name="confirm-password" required />
             </div>
             <button type="submit" name="login">Register</button>
         </form>
