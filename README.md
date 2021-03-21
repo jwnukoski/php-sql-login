@@ -8,8 +8,7 @@ No third-party apps, just standard PHP session authentication, which can be edit
 This project is kept as light as possible, so that it can be used in many places.      
 
 ## Hashing
-Hashes created with PHP's BCRYPT algorithm.  
-Salting is kept default per the PHP docs.  
+Hashes created with PHP's password_verify default algorithm.  
 
 ## Connections
 SQL connections are connected with PDO and prepared statements.  
